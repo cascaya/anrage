@@ -1,0 +1,94 @@
+#!/bin/sh
+
+interrupt() {
+    echo $*
+    exit 1
+}
+
+usage() {
+echo "$0 --extname=module" 
+echo ""
+echo "  --extname=module   module is the name of your extension"
+echo "  --functions=function1 function2 ...   functions is the name of the php function"
+exit 1
+}
+
+if test $# = 0; then
+  usage
+fi
+
+while test $# -gt 0; do
+  case "$1" in
+  -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+  *) optarg= ;;
+  esac
+
+  case $1 in
+    --extname=?*)
+	    EXTNAME=$optarg
+	    EXTNAMEUP=`echo $EXTNAME | tr "[:lower:]" "[:upper:]"`
+        EXTNAMELOW=`echo $EXTNAME | tr "[:upper:]" "[:lower:]"`
+        EXTDIR="../$EXTNAMEUP"
+	;;
+    --functions=?*)
+        FUNCTIONS=$optarg;
+    ;;
+    *)
+	    usage
+	;;
+  esac
+  shift
+done
+
+TEMPLATESDIR="templates"
+CONFIGM4="config.m4"
+EXTTEMPLATEC="extension.c"
+EXTTEMPLATEH="php_extension.h"
+FUNCTEMPLATE="extensionfunctions.c"
+FUNCEXT="functions.c"
+
+#check templates
+if [ ! -d "$TEMPLATESDIR" ]; then
+    interrupt "$TEMPLATESDIR not exists"
+fi
+
+# check template exists
+if [ ! -f "$TEMPLATESDIR/$CONFIGM4" ]; then
+    interrupt "$CONFIGM4 template not exists"
+fi
+
+#check extension
+if [ -d "$EXTDIR" ]; then
+    interrupt "$EXTNAMEUP already exists"
+fi
+
+# mkae ext-dir
+mkdir $EXTDIR
+
+# create a function.c file for c functionality
+if [ ! -f "$EXTDIR/$FUNCEXT" ]; then
+    touch $EXTDIR/$FUNCEXT;
+fi
+
+# set function default
+[ -n "$FUNCTIONS" ] || FUNCTION=$EXTNAMELOW
+
+# handle more than one function
+set -- $FUNCTIONS
+
+for TMP; do
+    PHP_FE=$PHP_FE"PHP_FE\($TMP, NULL\)\n    " 
+    PHP_FUNCTION=$PHP_FUNCTION"PHP_FUNCTION\($TMP\)\n    "
+    sed -e "s/%%function%%/$TMP/g" < $TEMPLATESDIR/$FUNCTEMPLATE >> $EXTDIR/$FUNCEXT
+done;
+
+
+# create config.m4 with template
+sed -e "s/%%module-up%%/$EXTNAMEUP/g" -e "s/%%module-low%%/$EXTNAMELOW/g" < $TEMPLATESDIR/$CONFIGM4 > $EXTDIR/$CONFIGM4
+
+# create extension.c
+sed -e "s/%%module-up%%/$EXTNAMEUP/g" -e "s/%%module-low%%/$EXTNAMELOW/g"  -e "s/%%functions%%/$PHP_FE/g" < $TEMPLATESDIR/$EXTTEMPLATEC > $EXTDIR/"$EXTNAMELOW.c"
+
+# create extension.h
+sed -e "s/%%module-up%%/$EXTNAMEUP/g" -e "s/%%module-low%%/$EXTNAMELOW/g"  -e "s/%%functions%%/$PHP_FUNCTION/g"< $TEMPLATESDIR/$EXTTEMPLATEH > $EXTDIR/"php_$EXTNAMELOW.h"
+
