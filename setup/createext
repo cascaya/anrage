@@ -28,7 +28,7 @@ while test $# -gt 0; do
 	    EXTNAME=$optarg
 	    EXTNAMEUP=`echo $EXTNAME | tr "[:lower:]" "[:upper:]"`
         EXTNAMELOW=`echo $EXTNAME | tr "[:upper:]" "[:lower:]"`
-        EXTDIR="../$EXTNAMEUP"
+        EXTDIR="../src/$EXTNAMEUP"
 	;;
     --functions=?*)
         FUNCTIONS=$optarg;
@@ -42,6 +42,7 @@ done
 
 TEMPLATESDIR="templates"
 CONFIGM4="config.m4"
+MAKEFILE="extension.Makefile"
 EXTTEMPLATEC="extension.c"
 EXTTEMPLATEH="php_extension.h"
 FUNCTEMPLATE="extensionfunctions.c"
@@ -85,6 +86,9 @@ done;
 
 # create config.m4 with template
 sed -e "s/%%module-up%%/$EXTNAMEUP/g" -e "s/%%module-low%%/$EXTNAMELOW/g" < $TEMPLATESDIR/$CONFIGM4 > $EXTDIR/$CONFIGM4
+
+# create extension.Makefile
+sed -e "s/%%module-up%%/$EXTNAMEUP/g" -e "s/%%module-low%%/$EXTNAMELOW/g" < $TEMPLATESDIR/$MAKEFILE > $EXTDIR/"$EXTNAMELOW.Makefile"
 
 # create extension.c
 sed -e "s/%%module-up%%/$EXTNAMEUP/g" -e "s/%%module-low%%/$EXTNAMELOW/g"  -e "s/%%functions%%/$PHP_FE/g" < $TEMPLATESDIR/$EXTTEMPLATEC > $EXTDIR/"$EXTNAMELOW.c"
