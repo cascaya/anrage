@@ -5,6 +5,7 @@ ini.o: make.o
 	echo extension=strflip.so > strflip.ini; \
 	install -D -m644 strflip.ini /etc/php/conf.d/strflip.ini; \
 	phpize --clean;
+	rm strflip.ini
 
 make.o: configure.o
 	make; \
