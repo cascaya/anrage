@@ -80,14 +80,14 @@ if [ ! -f "$EXTDIR/$FUNCEXT" ]; then
 fi
 
 # set function default
-[ -n "$FUNCTIONS" ] || FUNCTION=$EXTNAMELOW
+[ -n "$FUNCTIONS" ] || FUNCTIONS=$EXTNAMELOW
 
 # handle more than one function
 set -- $FUNCTIONS
 
 for TMP; do
     PHP_FE=$PHP_FE"PHP_FE\($TMP, NULL\)\n    " 
-    PHP_FUNCTION=$PHP_FUNCTION"PHP_FUNCTION\($TMP\)\n    "
+    PHP_FUNCTION=$PHP_FUNCTION"PHP_FUNCTION\($TMP\);\n    "
     sed -e "s/%%function%%/$TMP/g" < $TEMPLATESDIR/$FUNCTEMPLATE >> $EXTDIR/$FUNCEXT
 done;
 

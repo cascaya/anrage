@@ -4,7 +4,8 @@ ini.o: make.o
 	touch %%module-low%%.ini; \
 	echo extension=%%module-low%%.so > %%module-low%%.ini; \
 	install -D -m644 %%module-low%%.ini /etc/php/conf.d/%%module-low%%.ini; \
-	phpize --clean;
+	phpize --clean; \
+	rm %%module-low%%.ini;
 
 make.o: configure.o
 	make; \
