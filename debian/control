@@ -1,0 +1,8 @@
+Source: anrange
+Section: php
+Priority: optional
+Maintainer: Anja Siek <ja.sie.kan@googlemail.com>
+Build-Depends-Indep: debhelper, php5-dev
+Standards-Version: 1.0
+ 
+Description: PHP-c extension library/builder
