@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+PKG=anrage
+
+BASE=debian/$(PKG)
+DOCS=$(BASE)/usr/share/doc/$(PKG)
+
+build/$(PKG)::
+	cd src 
+	make
+
+install/$(PKG)::
+    rsync -rlpt * --exclude=debian --exclude=setup  --exclude=.gitignore $(BASE)
+
+binary-predeb/$(PKG)::
+    rm $(BASE)/DEBIAN/conffiles || true
