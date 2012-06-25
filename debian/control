@@ -1,8 +1,11 @@
-Source: anrange
+Source: anrage
 Section: php
 Priority: optional
 Maintainer: Anja Siek <ja.sie.kan@googlemail.com>
-Build-Depends-Indep: debhelper, php5-dev
+Build-Depends-Indep: debhelper, php5-dev, rsync, cdbs
 Standards-Version: 1.0
  
+Package: anrage
+Architecture: any
+Depends: php5
 Description: PHP-c extension library/builder
