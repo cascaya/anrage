@@ -12,7 +12,7 @@ build/$(PKG)::
 	make
 
 install/$(PKG)::
-    rsync -rlpt * --exclude=debian --exclude=setup  --exclude=.gitignore $(BASE)
+	rsync -rlpt * --exclude=debian --exclude=setup  --exclude=.gitignore $(BASE)
 
 binary-predeb/$(PKG)::
-    rm $(BASE)/DEBIAN/conffiles || true
+	rm $(BASE)/DEBIAN/conffiles || true
