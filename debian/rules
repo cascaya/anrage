@@ -8,7 +8,7 @@ BASE=debian/$(PKG)
 DOCS=$(BASE)/usr/share/doc/$(PKG)
 
 build/$(PKG)::
-	cd anrage/src 
+	cd src/src 
 	make
 
 install/$(PKG)::
