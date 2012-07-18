@@ -7,5 +7,5 @@ Standards-Version: 1.0
  
 Package: anrage
 Architecture: any
-Depends: php5
+Depends: php5-cli
 Description: PHP-c extension library/builder
