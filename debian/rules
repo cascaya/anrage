@@ -6,13 +6,13 @@ PKG=anrage
 
 BASE=debian/$(PKG)
 DOCS=$(BASE)/usr/share/doc/$(PKG)
+CONFDIR=$(shell php -i |grep 'for additional .ini files'| sed -e"s/.*=> //g";)
 
 build/$(PKG)::
-	cd src 
-	make
+	$(MAKE) -C src DESTDIR=$$(pwd) CONFDIR=$(CONFDIR) 
 
 install/$(PKG)::
-	rsync -rlpt * --exclude=debian --exclude=setup  --exclude=.gitignore $(BASE)
+	rsync -rlpt * --exclude=debian --exclude=setup --exclude=src --exclude=.gitignore $(BASE)
 
 binary-predeb/$(PKG)::
 	rm $(BASE)/DEBIAN/conffiles || true
