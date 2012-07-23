@@ -1,0 +1,145 @@
+/***************************************************
+*
+* anrage - another c library for php
+*
+****************************************************/
+
+===========
+What is it?
+===========
+Its another c library for php with functionality which makes me less anrage if I had to work with php.
+
+To make it easyer to write a php-module in c there is a Generator for the first steps to build the api stuff.
+Its NOT the complete functionality of this api stuff its only the main functionality you need to build a new module.
+If there is functionality missing you can add it in your [module].c wehre the most api-stuff is in. 
+Therefor also  have a look at http://devzone.zend.com/303/extension-writing-part-i-introduction-to-php-and-zend/ 
+
+And please if there is main -functionality missing please ask me for add it to the generator. 
+Its only the first try to do this and I think there are many things whitch can be added or changed.
+
+
+
+==========
+Structure:
+==========
+
+|-- README
+|-- setup
+|   |-- createext
+|   `-- templates
+|       |-- config.m4
+|       |-- extension.c
+|       |-- extensionfunctions.c
+|       |-- extension.Makefile
+|       `-- php_extension.h
+`-- src
+    |-- Makefile
+    `-- STRFLIP
+        |-- config.m4
+        |-- functions.c
+        |-- php_strflip.h
+        |-- strflip.c
+        `-- strflip.Makefile
+
+there is a generator part (setup) and a sources part (src)
+generator:
+    you can use the createext script to generate the first steps for your module.
+    It will create a new directory in the src -part with a lot of files witch you will need to 
+    create a new php module. All these files are required for the build job so please use it ;)
+sources:
+    here are th moduels. 
+
+
+
+===========
+How to use?
+===========
+
+usage is rearly simple:
+ - go to setup-dir 
+ - run:
+    ./createext --extname=[extensionname] 
+    or : ./createext --help for more information
+ - start to create your C-code in the functions.c after the generated part 
+    (or in an separate file (than add an include to the functions.c)).
+ - the only thing you have to change for the api-stuff is the ganerated function part in the functions.c:
+
+the script will create something like:
+
+  --------------------------------------------------
+  |  PHP_FUNCTION([functionname]) 
+  |  {
+  |  }
+  |
+  --------------------------------------------------
+
+what you need to do is to fill this part with incomming and outgoing parts like this:
+  
+  ---------------------------------------------------------------------------------------------------------
+  |  PHP_FUNCTION(strflip) 
+  |  {
+  |      char *utf8str;
+  |      int utf8strlen;
+  |      if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &utf8str, &utf8strlen) == FAILURE) {
+  |          RETURN_NULL();
+  |      }
+  |      strrev_utf8(utf8str);
+  |  
+  |      RETURN_STRING(utf8str, utf8strlen);
+  |  }
+  ----------------------------------------------------------------------------------------------------------  
+
+How to do this?
+- there are three parts in it: 
+    - incomming-values:
+
+        1. defind incomming values:
+        ===========================
+          ----
+            char *utf8str;
+            int utf8strlen;
+          ----
+
+        2 . handle incomming and return on failure:
+        ===========================================
+         - for STRING you need two the string and it length in php you will only add one value: ("strflip($string);")
+           
+           ----
+            if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &utf8str, &utf8strlen) == FAILURE) {
+                RETURN_NULL();
+            }
+           ---- 
+         
+          - or for example :
+          
+           ---- 
+            if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ld|b", &a, &b, &return_long) == FAILURE) {
+                RETURN_NULL();
+            }
+           ----
+
+            as you can see th special part is the : ("s", &utf8str, &utf8strlen ) part.
+                - first in the "" the types use a pipe | for optional parameters. 
+                - after that the value-names witch you have defind before 
+            
+            - for the different types look at:
+                http://docstore.mik.ua/orelly/webprog/php/ch14_07.htm
+    
+
+    - main function call of your c- function:
+      ----
+        strrev_utf8(utf8str);  
+      ----
+
+
+    - return-value :
+      ----        
+        RETURN_STRING(utf8str, utf8strlen);
+      ----
+      
+      - have a look at: 
+            http://docstore.mik.ua/orelly/webprog/php/ch14_08.htm
+ 
+        
+
+
