@@ -3,7 +3,7 @@ all: ini.o
 ini.o: make.o
 	touch %%module-low%%.ini; 
 	echo extension=%%module-low%%.so > %%module-low%%.ini; 
-	install -D -m644 %%module-low%%.ini $(DESTDIR)/$(CONFDDIR)%%module-low%%.ini; 
+	install -D -m644 %%module-low%%.ini $(DESTDIR)/$(CONFDIR)%%module-low%%.ini; 
 	phpize --clean;
 	rm %%module-low%%.ini;
 

@@ -3,7 +3,7 @@ all: ini.o
 ini.o: make.o
 	touch strflip.ini; 
 	echo extension=strflip.so > strflip.ini; 
-	install -D -m644 strflip.ini $(DESTDIR)/$(CONFDIR)strflip.ini;
+	install -D -m644 strflip.ini $(DESTDIR)/$(CONFDIR)/strflip.ini;
 	phpize --clean;
 	rm strflip.ini;
 

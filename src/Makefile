@@ -4,3 +4,6 @@ all: strflip
 
 strflip: STRFLIP/strflip.Makefile
 	$(MAKE) -C STRFLIP  -f strflip.Makefile CONFDIR=$(CONFDIR);
+
+country: COUNTRY/country.Makefile
+	$(MAKE) -C COUNTRY  -f country.Makefile CONFDIR=$(CONFDIR);
